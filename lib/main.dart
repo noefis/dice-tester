@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/faceCountSelection.dart';
 import 'newDiceSelection.dart';
 
 void main() {
@@ -25,19 +24,5 @@ class MyApp extends StatelessWidget {
             ),
           ),
         ));
-  }
-}
-
-class SecondRoute extends StatelessWidget {
-  const SecondRoute({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('New Dice'),
-      ),
-      body: faceCountSelection(context),
-    );
   }
 }

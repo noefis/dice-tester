@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'main.dart';
+import 'faceCountSelection.dart';
 
 Widget newDiceSection(BuildContext context) {
   return Container(
