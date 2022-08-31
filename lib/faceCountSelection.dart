@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/diceSelection.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:developer' as developer;
 // REMOVE LOG WHEN DONE IMPLEMENTING
@@ -21,7 +22,7 @@ class _FaceCountSelectionState extends State<SecondRoute> {
   Future<void> _newDice(name, dice) async {
     final prefs = await SharedPreferences.getInstance();
     prefs.setStringList(
-        "dice_" + name + dice, [name, dice, "0", "insufficient data"]);
+        "dice_" + name + dice, [name, dice, "0", "Insufficient data"]);
   }
 
   Future<bool> _diceExists(name, dice) async {
@@ -105,9 +106,14 @@ class _FaceCountSelectionState extends State<SecondRoute> {
                     );
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(myController.text)),
+                      SnackBar(
+                          content: Text("Created dice: " + myController.text)),
                     );
                     _newDice(myController.text, label);
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const FirstRoute()));
                   }
                 }
               },
