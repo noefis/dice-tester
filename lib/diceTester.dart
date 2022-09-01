@@ -26,7 +26,6 @@ class _DiceTesterState extends State<ThirdRoute> {
   }
 
   void throwDice(num) {
-    print(num);
     int roll = num;
     int max = int.parse(widget.dice![1].substring(1));
     total++;
@@ -85,7 +84,7 @@ class _DiceTesterState extends State<ThirdRoute> {
     String dice = widget.dice![1];
     List<String>? data = prefs.getStringList("stats_" + name + dice);
     if (avg == "0" && data != null) {
-      avg = data![0];
+      avg = data[0];
       accuracy = data[1];
       rating = data[2];
       dmax = int.parse(data[3]);
@@ -101,7 +100,8 @@ class _DiceTesterState extends State<ThirdRoute> {
     loadValues();
     return Scaffold(
         appBar: AppBar(
-            title: Text(widget.dice![1] + " " + widget.dice![0]),
+            title:
+                Text(widget.dice![1] + " " + maxLeghtString(widget.dice![0])),
             leading: IconButton(
               icon: Icon(Icons.arrow_back),
               onPressed: () => Navigator.push(
@@ -114,6 +114,13 @@ class _DiceTesterState extends State<ThirdRoute> {
             child: ListView(
               children: [diceInfo(widget.dice), NumPad(widget.dice![1])],
             )));
+  }
+
+  String maxLeghtString(str) {
+    if (str.length > 20) {
+      return str.substring(0, 19) + "...";
+    }
+    return str;
   }
 
   Widget diceInfo(dice) {
@@ -222,8 +229,6 @@ class _DiceTesterState extends State<ThirdRoute> {
   }
 
   List<List> numPadArray(diceCount) {
-    print(diceCount);
-
     switch (diceCount) {
       case "D4":
         {

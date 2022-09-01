@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/diceTester.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:developer' as developer;
-
 import 'faceCountSelection.dart';
-// REMOVE LOG WHEN DONE IMPLEMENTING
 
 class FirstRoute extends StatefulWidget {
   const FirstRoute({super.key});
@@ -18,7 +15,6 @@ class _DiceSelectionState extends State<FirstRoute> {
 
   Future<void> getDices() async {
     final prefs = await SharedPreferences.getInstance();
-    developer.log(prefs.getKeys().toString());
 
     Set<String> keys =
         prefs.getKeys().where((element) => element.contains("dice_")).toSet();
@@ -119,31 +115,41 @@ class _DiceSelectionState extends State<FirstRoute> {
                     child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(dice[1],
+                          Text(dice[1] + ",  " + maxLeghtString(dice[0]),
                               style: const TextStyle(
                                 color: Colors.black,
                                 fontSize: 21,
                                 fontWeight: FontWeight.w400,
                               )),
-                          Text(dice[0],
-                              style: const TextStyle(
-                                color: Colors.black,
-                                fontSize: 17,
-                                fontWeight: FontWeight.w400,
-                              )),
-                          Text(dice[2] + " avg",
-                              style: const TextStyle(
-                                color: Colors.black,
-                                fontSize: 17,
-                                fontWeight: FontWeight.w400,
-                              )),
-                          Text(dice[3],
-                              style: const TextStyle(
-                                color: Colors.black,
-                                fontSize: 17,
-                                fontWeight: FontWeight.w400,
-                              ))
+                          _Text(dice[2] + " avg"),
+                          _Text(dice[3])
                         ])))));
+  }
+
+  String maxLeghtString(str) {
+    if (str.length > 10) {
+      return str.substring(0, 9) + "...";
+    }
+    return str;
+  }
+
+  Widget _Text(text) {
+    var color = Colors.black;
+    if (text == "good") {
+      color = Colors.green;
+    }
+    if (text == "bad") {
+      color = Colors.redAccent;
+    }
+    if (text == "Insufficient data") {
+      color = Colors.redAccent;
+    }
+    return Text(text,
+        style: TextStyle(
+          color: color,
+          fontSize: 17,
+          fontWeight: FontWeight.w400,
+        ));
   }
 
   Widget newDiceSection() {

@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:developer' as developer;
-
 import 'main.dart';
-// REMOVE LOG WHEN DONE IMPLEMENTING
 
 class SecondRoute extends StatefulWidget {
   const SecondRoute({super.key});
@@ -28,9 +25,6 @@ class _FaceCountSelectionState extends State<SecondRoute> {
 
   Future<bool> _diceExists(name, dice) async {
     final prefs = await SharedPreferences.getInstance();
-    developer.log(
-        (prefs.getStringList("dice_" + name + dice) != null).toString(),
-        name: 'my.app.category');
     return prefs.getStringList("dice_" + name + dice) != null;
   }
 
