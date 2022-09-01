@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/diceTester.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:developer' as developer;
 
@@ -106,35 +107,43 @@ class _DiceSelectionState extends State<FirstRoute> {
                   padding:
                       MaterialStateProperty.all<EdgeInsets>(EdgeInsets.all(10)),
                 ),
-                onPressed: () {},
-                child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      Text(dice[1],
-                          style: const TextStyle(
-                            color: Colors.black,
-                            fontSize: 21,
-                            fontWeight: FontWeight.w400,
-                          )),
-                      Text(dice[0],
-                          style: const TextStyle(
-                            color: Colors.black,
-                            fontSize: 17,
-                            fontWeight: FontWeight.w400,
-                          )),
-                      Text(dice[2] + " avg",
-                          style: const TextStyle(
-                            color: Colors.black,
-                            fontSize: 17,
-                            fontWeight: FontWeight.w400,
-                          )),
-                      Text(dice[3],
-                          style: const TextStyle(
-                            color: Colors.black,
-                            fontSize: 17,
-                            fontWeight: FontWeight.w400,
-                          ))
-                    ]))));
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ThirdRoute(dice: dice)),
+                  );
+                },
+                child: Container(
+                    margin: const EdgeInsets.only(left: 10, right: 10),
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(dice[1],
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 21,
+                                fontWeight: FontWeight.w400,
+                              )),
+                          Text(dice[0],
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 17,
+                                fontWeight: FontWeight.w400,
+                              )),
+                          Text(dice[2] + " avg",
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 17,
+                                fontWeight: FontWeight.w400,
+                              )),
+                          Text(dice[3],
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 17,
+                                fontWeight: FontWeight.w400,
+                              ))
+                        ])))));
   }
 
   Widget newDiceSection() {
