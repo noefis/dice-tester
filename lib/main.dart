@@ -16,6 +16,7 @@ class MyApp extends StatelessWidget {
       ),
       home: Builder(
         builder: (context) => Scaffold(
+          backgroundColor: Color.fromARGB(255, 241, 241, 241),
           appBar: AppBar(
             title: const Text('Dice Tester'),
           ),

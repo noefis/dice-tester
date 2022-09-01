@@ -25,7 +25,9 @@ class _DiceSelectionState extends State<FirstRoute> {
     Set<List<String>?> tmpDices = new Set();
 
     keys.forEach((key) {
-      tmpDices.add(prefs.getStringList(key));
+      List<String>? dice = prefs.getStringList(key);
+      dice?.add(key);
+      tmpDices.add(dice);
     });
 
     if (dices.toString() != tmpDices.toString()) {
@@ -34,13 +36,15 @@ class _DiceSelectionState extends State<FirstRoute> {
     }
   }
 
-  Future<void> deleteDices() async {
+  Future<void> _newDice(name, dice) async {
     final prefs = await SharedPreferences.getInstance();
-    Set<String> keys = prefs.getKeys();
-    keys.forEach((key) {
-      prefs.remove(key);
-    });
-    setState(() {});
+    prefs.setStringList(
+        "dice_" + name + dice, [name, dice, "0", "Insufficient data"]);
+  }
+
+  Future<void> deleteDice(key) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.remove(key);
   }
 
   @override
@@ -55,7 +59,6 @@ class _DiceSelectionState extends State<FirstRoute> {
         margin: const EdgeInsets.only(top: 30),
         child: ListView(
           children: [
-            clearAll(),
             ...dices.map((dice) => existingDice(dice)),
             newDiceSection()
           ],
@@ -63,55 +66,75 @@ class _DiceSelectionState extends State<FirstRoute> {
   }
 
   Widget existingDice(dice) {
-    return Container(
-        margin: const EdgeInsets.only(top: 0, right: 0),
-        child: ElevatedButton(
-            style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
-                padding:
-                    MaterialStateProperty.all<EdgeInsets>(EdgeInsets.all(10)),
-                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                    RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(3),
-                ))),
-            onPressed: () {},
-            child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  Text(dice[1],
-                      style: const TextStyle(
-                        color: Colors.black,
-                        fontSize: 21,
-                        fontWeight: FontWeight.w400,
-                      )),
-                  Text(dice[0],
-                      style: const TextStyle(
-                        color: Colors.black,
-                        fontSize: 17,
-                        fontWeight: FontWeight.w400,
-                      )),
-                  Text(dice[2] + " avg",
-                      style: const TextStyle(
-                        color: Colors.black,
-                        fontSize: 17,
-                        fontWeight: FontWeight.w400,
-                      )),
-                  Text(dice[3],
-                      style: const TextStyle(
-                        color: Colors.black,
-                        fontSize: 17,
-                        fontWeight: FontWeight.w400,
-                      ))
-                ])));
-  }
-
-  Widget clearAll() {
-    return ElevatedButton(
-        style: ButtonStyle(
-            backgroundColor:
-                MaterialStateProperty.all<Color>(Colors.redAccent)),
-        child: Text("Delete all dices"),
-        onPressed: () => {deleteDices()});
+    return Dismissible(
+        key: Key(dice[4]),
+        confirmDismiss: (direction) async {
+          if (direction == DismissDirection.endToStart) {
+            await deleteDice(dice[4]);
+            // Remove the item from the data source.
+            setState(() {});
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text('Dice ${dice[0]} dismissed'),
+              action: SnackBarAction(
+                  label: "Undo",
+                  textColor: Colors.yellow,
+                  onPressed: () {
+                    _newDice(dice[0], dice[1]);
+                    setState(() {});
+                  }),
+            ));
+          }
+        },
+        secondaryBackground: Container(
+          color: Colors.red,
+          child: Align(
+            alignment: Alignment.centerRight,
+            child: Text("Delete",
+                style: const TextStyle(
+                  color: Colors.black,
+                  fontSize: 21,
+                )),
+          ),
+        ),
+        background: Container(color: Colors.white),
+        child: Container(
+            margin: const EdgeInsets.only(top: 0, right: 0),
+            child: ElevatedButton(
+                style: ButtonStyle(
+                  backgroundColor:
+                      MaterialStateProperty.all<Color>(Colors.white),
+                  padding:
+                      MaterialStateProperty.all<EdgeInsets>(EdgeInsets.all(10)),
+                ),
+                onPressed: () {},
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Text(dice[1],
+                          style: const TextStyle(
+                            color: Colors.black,
+                            fontSize: 21,
+                            fontWeight: FontWeight.w400,
+                          )),
+                      Text(dice[0],
+                          style: const TextStyle(
+                            color: Colors.black,
+                            fontSize: 17,
+                            fontWeight: FontWeight.w400,
+                          )),
+                      Text(dice[2] + " avg",
+                          style: const TextStyle(
+                            color: Colors.black,
+                            fontSize: 17,
+                            fontWeight: FontWeight.w400,
+                          )),
+                      Text(dice[3],
+                          style: const TextStyle(
+                            color: Colors.black,
+                            fontSize: 17,
+                            fontWeight: FontWeight.w400,
+                          ))
+                    ]))));
   }
 
   Widget newDiceSection() {
@@ -119,13 +142,10 @@ class _DiceSelectionState extends State<FirstRoute> {
         margin: const EdgeInsets.only(left: 0, right: 0),
         child: ElevatedButton(
             style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
-                padding:
-                    MaterialStateProperty.all<EdgeInsets>(EdgeInsets.all(10)),
-                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                    RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(3.0),
-                ))),
+              backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
+              padding:
+                  MaterialStateProperty.all<EdgeInsets>(EdgeInsets.all(10)),
+            ),
             onPressed: () {
               Navigator.push(
                 context,

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/diceSelection.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:developer' as developer;
+
+import 'main.dart';
 // REMOVE LOG WHEN DONE IMPLEMENTING
 
 class SecondRoute extends StatefulWidget {
@@ -93,7 +94,7 @@ class _FaceCountSelectionState extends State<SecondRoute> {
           child: ElevatedButton(
               style: ElevatedButton.styleFrom(
                 fixedSize: const Size(120, 120),
-                primary: Colors.white,
+                backgroundColor: Colors.white,
               ),
               onPressed: () async {
                 // Validate returns true if the form is valid, or false otherwise.
@@ -110,10 +111,8 @@ class _FaceCountSelectionState extends State<SecondRoute> {
                           content: Text("Created dice: " + myController.text)),
                     );
                     _newDice(myController.text, label);
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const FirstRoute()));
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => const MyApp()));
                   }
                 }
               },
