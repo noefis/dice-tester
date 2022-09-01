@@ -11,7 +11,8 @@ class FirstRoute extends StatefulWidget {
 }
 
 class _DiceSelectionState extends State<FirstRoute> {
-  Set<List<String>?> dices = new Set();
+  var tmpDiceData;
+  List<List<String>?> dices = [];
 
   Future<void> getDices() async {
     final prefs = await SharedPreferences.getInstance();
@@ -19,7 +20,7 @@ class _DiceSelectionState extends State<FirstRoute> {
     Set<String> keys =
         prefs.getKeys().where((element) => element.contains("dice_")).toSet();
 
-    Set<List<String>?> tmpDices = new Set();
+    List<List<String>?> tmpDices = [];
 
     keys.forEach((key) {
       List<String>? dice = prefs.getStringList(key);
@@ -27,20 +28,26 @@ class _DiceSelectionState extends State<FirstRoute> {
       tmpDices.add(dice);
     });
 
+    tmpDices.sort((a, b) => getDiceCount(a![1]).compareTo(getDiceCount(b![1])));
+
     if (dices.toString() != tmpDices.toString()) {
       dices = tmpDices;
       setState(() {});
     }
   }
 
-  Future<void> _newDice(name, dice) async {
+  int getDiceCount(str) {
+    return int.parse(str.substring(1));
+  }
+
+  Future<void> _restoreDice(name, dice) async {
     final prefs = await SharedPreferences.getInstance();
-    prefs.setStringList(
-        "dice_" + name + dice, [name, dice, "0", "Insufficient data"]);
+    prefs.setStringList("dice_" + name + dice, tmpDiceData);
   }
 
   Future<void> deleteDice(key) async {
     final prefs = await SharedPreferences.getInstance();
+    tmpDiceData = prefs.get(key);
     prefs.remove(key);
   }
 
@@ -71,12 +78,12 @@ class _DiceSelectionState extends State<FirstRoute> {
             // Remove the item from the data source.
             setState(() {});
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text('Dice ${dice[0]} dismissed'),
+              content: Text('Dice ${dice[0]} deleted'),
               action: SnackBarAction(
                   label: "Undo",
                   textColor: Colors.yellow,
                   onPressed: () {
-                    _newDice(dice[0], dice[1]);
+                    _restoreDice(dice[0], dice[1]);
                     setState(() {});
                   }),
             ));
@@ -95,9 +102,10 @@ class _DiceSelectionState extends State<FirstRoute> {
         ),
         background: Container(color: Colors.white),
         child: Container(
-            margin: const EdgeInsets.only(top: 0, right: 0),
+            margin: const EdgeInsets.only(bottom: 1, right: 0),
             child: ElevatedButton(
                 style: ButtonStyle(
+                  elevation: MaterialStateProperty.all(1),
                   backgroundColor:
                       MaterialStateProperty.all<Color>(Colors.white),
                   padding:
@@ -158,6 +166,7 @@ class _DiceSelectionState extends State<FirstRoute> {
         child: ElevatedButton(
             style: ButtonStyle(
               backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
+              elevation: MaterialStateProperty.all(1),
               padding:
                   MaterialStateProperty.all<EdgeInsets>(EdgeInsets.all(10)),
             ),
