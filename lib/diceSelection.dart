@@ -12,6 +12,7 @@ class FirstRoute extends StatefulWidget {
 
 class _DiceSelectionState extends State<FirstRoute> {
   var tmpDiceData;
+  var tmpStatsData;
   List<List<String>?> dices = [];
 
   Future<void> getDices() async {
@@ -43,11 +44,15 @@ class _DiceSelectionState extends State<FirstRoute> {
   Future<void> _restoreDice(name, dice) async {
     final prefs = await SharedPreferences.getInstance();
     prefs.setStringList("dice_" + name + dice, tmpDiceData);
+    prefs.setStringList("stats_" + name + dice, tmpStatsData);
   }
 
   Future<void> deleteDice(key) async {
     final prefs = await SharedPreferences.getInstance();
     tmpDiceData = prefs.get(key);
+    String statsKey = "stats_" + tmpDiceData[0] + tmpDiceData[1];
+    tmpStatsData = prefs.get(statsKey);
+    prefs.remove(statsKey);
     prefs.remove(key);
   }
 

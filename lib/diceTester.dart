@@ -1,6 +1,10 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'PopupInfo.dart';
 
 class ThirdRoute extends StatefulWidget {
   final List<String>? dice;
@@ -19,6 +23,7 @@ class _DiceTesterState extends State<ThirdRoute> {
   int d1 = 0;
   int total = 0;
   int count = 0;
+  double std_dev = 0;
 
   @override
   void initState() {
@@ -37,6 +42,11 @@ class _DiceTesterState extends State<ThirdRoute> {
       dmax++;
     }
     avg = (count / total).toStringAsFixed(1);
+
+    double R = num - ((max + 1) / 2);
+    print("R: " + R.toString());
+    std_dev = double.parse(
+        (sqrt(std_dev * std_dev + (R * R) * (1 / max))).toStringAsFixed(2));
 
     if (count / total > (max + 1) / 2) {
       rating = "good";
@@ -73,7 +83,8 @@ class _DiceTesterState extends State<ThirdRoute> {
       dmax.toString(),
       d1.toString(),
       total.toString(),
-      count.toString()
+      count.toString(),
+      std_dev.toStringAsFixed(2)
     ]);
     setState(() {});
   }
@@ -91,6 +102,7 @@ class _DiceTesterState extends State<ThirdRoute> {
       d1 = int.parse(data[4]);
       total = int.parse(data[5]);
       count = int.parse(data[6]);
+      std_dev = double.parse(data[7]);
       setState(() {});
     }
   }
@@ -137,41 +149,65 @@ class _DiceTesterState extends State<ThirdRoute> {
             ),
           ],
         ),
-        padding: const EdgeInsets.all(20),
-        child: IntrinsicHeight(
-            child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _Text("rating"),
-                  _Text("accuracy"),
-                  _Text("${calcDefault(dice[1])} default"),
-                  _Text("${dice[1]} throws"),
-                  _Text("D1 throws"),
-                  _Text("Total throws")
-                ],
+        padding: const EdgeInsets.only(bottom: 0),
+        child: Column(children: [
+          Padding(
+              padding: const EdgeInsets.only(top: 20, left: 20, right: 20),
+              child: IntrinsicHeight(
+                  child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _Text("rating"),
+                        _Text("accuracy"),
+                        _Text("${calcDefault(dice[1])} default"),
+                        _Text("${dice[1]} throws"),
+                        _Text("D1 throws"),
+                        _Text("Total throws")
+                      ],
+                    ),
+                    VerticalDivider(
+                      color: Colors.black,
+                      thickness: 1,
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _Text("${rating}"),
+                        _Text("${accuracy}"),
+                        _Text("${avg} mean value"),
+                        _Text("${dmax}"),
+                        _Text("${d1}"),
+                        _Text("${total}"),
+                      ],
+                    ),
+                    Container(
+                      margin: const EdgeInsets.all(0),
+                    )
+                  ]))),
+          Align(
+            alignment: Alignment.centerRight,
+            child: TextButton(
+              child: Text('Advanced Stats'),
+              style: TextButton.styleFrom(
+                fixedSize: const Size(140, 48),
               ),
-              VerticalDivider(
-                color: Colors.black,
-                thickness: 1,
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _Text("${rating}"),
-                  _Text("${accuracy}"),
-                  _Text("${avg} mean value"),
-                  _Text("${dmax}"),
-                  _Text("${d1}"),
-                  _Text("${total}")
-                ],
-              ),
-              Container(
-                margin: const EdgeInsets.all(0),
-              )
-            ])));
+              onPressed: () => {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) => BuildPopup([
+                    total.toDouble(),
+                    count.toDouble(),
+                    std_dev,
+                    double.parse(calcDefault(widget.dice![1]))
+                  ]),
+                )
+              },
+            ),
+          ),
+        ]));
   }
 
   Widget _Text(text) {
